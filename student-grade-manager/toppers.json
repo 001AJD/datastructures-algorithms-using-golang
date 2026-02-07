@@ -1,0 +1,20 @@
+[
+  {
+    "studentName": "Ravi",
+    "subjects": [
+      95,
+      96,
+      98
+    ],
+    "average": 96.333336
+  },
+  {
+    "studentName": "Madhav",
+    "subjects": [
+      92.23,
+      99.66,
+      89.3
+    ],
+    "average": 93.73
+  }
+]
