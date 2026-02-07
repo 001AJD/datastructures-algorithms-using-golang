@@ -26,7 +26,7 @@ We define the structure of our data using two `structs`:
 
 #### Initialization
 *   `NewLinkedList()`: Creates an empty list (`Head` is `nil`, `Size` is 0).
-*   `NewNode(value, next)`: Creates a new node instance with the given data and next pointer.
+*   `NewNode(value)`: Creates a new node instance with the given data and its `Next` pointer initialized to `nil`.
 
 #### Insertion
 *   `InsertNodeAtStart(node)`: Adds a new node to the front of the list.
