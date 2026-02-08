@@ -14,5 +14,7 @@ func main() {
 	myLinkedList.InsertNodeAtStart(node3)
 	fmt.Println(myLinkedList)
 	myLinkedList.TraverseLinkedList()
-
+	myLinkedList.SearchByValue(10)
+	myLinkedList.SearchByValue(20)
+	myLinkedList.SearchByValue(100)
 }

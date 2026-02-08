@@ -39,7 +39,7 @@ func (l *LinkedList) InsertNodeAtStart(node *Node) {
 	l.Size++           //Increase the size of the linked list
 }
 
-// TraverseLinkedList function travers the singly linked list and prints the data stored at each node,
+// TraverseLinkedList function traverse the singly linked list and prints the data stored at each node,
 // Traversal stops when the pointer to the next node is empty
 func (l *LinkedList) TraverseLinkedList() {
 	var current *Node = l.Head
@@ -48,5 +48,19 @@ func (l *LinkedList) TraverseLinkedList() {
 		current = current.Next
 	}
 	fmt.Println("Reached end of linked list")
+}
 
+// SearchByValue function deletes the node when the first occurrence of the parameter value is matched
+// if the linked list is empty, the delete operation fails gracefully
+func (l *LinkedList) SearchByValue(value uint8) bool {
+	var current *Node = l.Head
+	for current != nil {
+		if current.Data == value {
+			fmt.Printf("Node containing value %d found\n", value)
+			return true
+		}
+		current = current.Next
+	}
+	fmt.Printf("Reached end of the linked list, node with given value :: %d not found\n", value)
+	return false
 }
