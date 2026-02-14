@@ -10,7 +10,7 @@ func main() {
 	fmt.Println("URL status checker initiating...")
 	PrintMemUsage()
 	start := time.Now()
-	ProcessFile("./data/top-1000.csv")
+	ProcessFile("./data/top-100000.csv")
 	elapsed := time.Since(start)
 	fmt.Printf("Processing completed in %s \n", elapsed)
 	PrintMemUsage()

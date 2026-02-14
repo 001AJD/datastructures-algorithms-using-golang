@@ -12,7 +12,8 @@ import (
 	"sync"
 )
 
-var BATCH_SIZE = 20
+var BATCH_SIZE = 500   // bigger batch size can consume more memory, increasing this does not make processing faster
+var WORKER_COUNT = 100 // check the file descriptor size and decide the worker count
 
 // ProcessFile reads a CSV file line by line and processes its first column (domains) in concurrent batches.
 // It utilizes a sync.WaitGroup to ensure all background goroutines finish processing before the function returns.
@@ -30,27 +31,23 @@ var BATCH_SIZE = 20
 // Note: This function will panic if the file cannot be opened or if a CSV read error
 // other than io.EOF occurs.
 func ProcessFile(filePath string) {
-	var batch []string
 	var wg sync.WaitGroup
 	file, err := os.Open(filePath)
 	if err != nil {
 		panic(err)
 	}
 	defer file.Close()
-	reader := csv.NewReader(file)
 
-	batchCounter := 1
+	jobs := make(chan string, BATCH_SIZE) // buffered channel
+
+	for i := 0; i < WORKER_COUNT; i++ {
+		wg.Add(1)
+		go worker(jobs, &wg)
+	}
+	reader := csv.NewReader(file)
 	for {
 		record, err := reader.Read()
 		if err == io.EOF {
-			if len(batch) > 0 {
-				wg.Add(1)
-				go func(b []string) { // A goroutine is spawned for each batch, feels magical here
-					defer wg.Done()
-					ProcessBatch(b)
-				}(batch)
-				// fmt.Printf("\nBatch %d, Goroutines %d\n", batchCounter, len(batch))
-			}
 			break
 		}
 		if err != nil {
@@ -58,18 +55,10 @@ func ProcessFile(filePath string) {
 		}
 
 		domain := record[0] // first column in csv is domain
-		batch = append(batch, domain)
-		if len(batch) == BATCH_SIZE {
-			wg.Add(1)
-			go func(b []string) { // A goroutine is spawned for each batch, feels magical twice now
-				defer wg.Done()
-				ProcessBatch(b)
-			}(batch)
-			batch = nil
-			// fmt.Printf("\nBatch %d, Goroutines %d\n", batchCounter, BATCH_SIZE)
-			batchCounter++
-		}
+		jobs <- domain
+
 	}
+	close(jobs)
 	wg.Wait()
 	fmt.Printf("\nFile processing complete\n")
 }
@@ -101,4 +90,12 @@ func ProcessBatch(batch []string) {
 		}(v)
 	}
 	wg.Wait()
+}
+
+func worker(jobs <-chan string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for url := range jobs {
+		CheckStatus(url)
+	}
+
 }
