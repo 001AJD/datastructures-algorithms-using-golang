@@ -100,7 +100,7 @@ func worker(jobs <-chan string, wg *sync.WaitGroup) {
 // Workflow:
 //  1. Prints the total count of items in the current batch for logging.
 //  2. Iterates over the slice, adding to a sync.WaitGroup for each entry.
-//  3. Launches an anonymous goroutine for each domain to perform a GET request via CheckStatus.
+//  3. Launches an anonymous goroutine for each domain to perform a HEAD request via CheckStatus.
 //  4. Blocks execution at wg.Wait() until every goroutine in the batch has signaled completion.
 //
 // Warning: This implementation spawns one goroutine per domain without a limit.
@@ -111,7 +111,7 @@ func ProcessBatch(batch []string) {
 	// fmt.Println(len(batch))
 	for _, v := range batch {
 		wg.Add(1)
-		go func(url string) { // go routines are spawned for a GET request for each domain, currently number of goroutines = number of domains, bad design, need to refactor
+		go func(url string) { // go routines are spawned for a HEAD request for each domain, currently number of goroutines = number of domains, bad design, need to refactor
 			defer wg.Done()
 			CheckStatus(url)
 		}(v)

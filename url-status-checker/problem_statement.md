@@ -7,7 +7,7 @@ The program works as follows:
 2. It divides the list of domains into smaller batches.
 3. For each batch, it spawns a new goroutine to process it.
 4. Within each batch-processing goroutine, it further spawns a separate goroutine for each individual domain to check its HTTP status.
-5. It uses `net/http` to send a GET request to each domain and determines if it's reachable based on the HTTP response.
+5. It uses `net/http` to send a HEAD request to each domain and determines if it's reachable based on the HTTP response.
 
 The primary purpose is to demonstrate the use of goroutines to parallelize I/O-bound tasks, such as making network requests, to improve performance.
 
@@ -70,7 +70,7 @@ Goroutines: 174132
         | For each domain
         v
 +-----------------+
-|   HTTP GET      |
+|   HTTP HEAD     |
 +-----------------+
         |
         v

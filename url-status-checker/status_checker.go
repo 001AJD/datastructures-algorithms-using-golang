@@ -13,7 +13,7 @@ var client = &http.Client{
 	},
 }
 
-// CheckStatus initiates a synchronous HTTP GET request for the provided URL.
+// CheckStatus initiates a synchronous HTTP HEAD request for the provided URL.
 // It logs the request initiation and the resulting status code (or error) to the console.
 //
 // Parameters:
@@ -33,7 +33,7 @@ func CheckStatus(url string) string {
 		return "Request with " + url + " failed with error :: " + err.Error()
 	} else {
 		defer response.Body.Close()
-		// fmt.Println("Http GET request successful, statusCode :: ", response.StatusCode)
+
 		return "Request with " + url + " succeed with status code :: " + strconv.Itoa(response.StatusCode)
 	}
 }
