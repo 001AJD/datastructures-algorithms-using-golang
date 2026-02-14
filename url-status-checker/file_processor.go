@@ -1,7 +1,3 @@
-// TODO: currently the goroutines are unbounded and directly depends on the number of urls in the file
-// example if there are 10,000 urls --> 10,000 goroutines are spawned, that is bad and needs be refactored
-// what's next ? - The concurrency should be bounded irrespective of the input size
-
 package main
 
 import (
@@ -12,18 +8,19 @@ import (
 	"sync"
 )
 
-var BATCH_SIZE = 500   // bigger batch size can consume more memory, increasing this does not make processing faster
-var WORKER_COUNT = 100 // check the file descriptor size and decide the worker count
+var BATCH_SIZE = 500   // This is now the size of the jobs channel buffer
+var WORKER_COUNT = 100 // The number of concurrent worker goroutines
 
-// ProcessFile reads a CSV file line by line and processes its first column (domains) in concurrent batches.
-// It utilizes a sync.WaitGroup to ensure all background goroutines finish processing before the function returns.
+// ProcessFile reads a CSV file line by line and processes its first column (domains) concurrently
+// using a worker pool. It utilizes a sync.WaitGroup to ensure all workers finish before the function returns.
 //
 // Workflow:
 //  1. Opens the file at the specified filePath.
-//  2. Iterates through the CSV records, accumulating domain strings into a slice (batch).
-//  3. Once the batch reaches BATCH_SIZE, it launches a goroutine to execute ProcessBatch(batch).
-//  4. Handles the final partial batch if the file ends before reaching a full BATCH_SIZE.
-//  5. Blocks at wg.Wait() until all asynchronous processing is complete.
+//  2. Creates a buffered channel `jobs` to send domains to workers.
+//  3. Spawns a fixed number of `WORKER_COUNT` goroutines (workers).
+//  4. Reads the CSV file record by record and sends each domain into the `jobs` channel.
+//  5. After reading the entire file, it closes the `jobs` channel.
+//  6. Blocks at wg.Wait() until all worker goroutines have finished processing all jobs and returned.
 //
 // Parameters:
 //   - filePath: The local system path to the CSV file to be processed.
@@ -63,6 +60,36 @@ func ProcessFile(filePath string) {
 	fmt.Printf("\nFile processing complete\n")
 }
 
+// worker continuously consumes domain strings from the provided jobs channel
+// and performs status verification using CheckStatus(url).
+//
+// Behavior:
+//   - The function runs as a long-lived goroutine.
+//   - It blocks on the jobs channel and processes incoming URLs sequentially.
+//   - It exits gracefully when the jobs channel is closed.
+//   - Upon exit, it signals completion to the provided WaitGroup.
+//
+// Concurrency Model:
+//   - Multiple worker instances can be launched to achieve bounded parallelism.
+//   - The total number of active workers determines the global concurrency level.
+//   - The jobs channel acts as a coordination mechanism between producer
+//     (domain feeder) and consumers (workers).
+//
+// Parameters:
+//   - jobs: A read-only channel that supplies domain strings for processing.
+//   - wg: A pointer to sync.WaitGroup used to track worker lifecycle.
+//
+// Note:
+//   - This worker processes jobs sequentially per goroutine.
+//   - Overall throughput scales with the number of worker goroutines spawned.
+//   - Proper channel closure is required to allow workers to terminate cleanly.
+func worker(jobs <-chan string, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for url := range jobs {
+		CheckStatus(url)
+	}
+}
+
 // ProcessBatch handles a collection of domain strings by initiating concurrent status checks.
 // It iterates through the provided batch and spawns a separate goroutine for each domain
 // to execute CheckStatus(url) in parallel.
@@ -90,12 +117,4 @@ func ProcessBatch(batch []string) {
 		}(v)
 	}
 	wg.Wait()
-}
-
-func worker(jobs <-chan string, wg *sync.WaitGroup) {
-	defer wg.Done()
-	for url := range jobs {
-		CheckStatus(url)
-	}
-
 }

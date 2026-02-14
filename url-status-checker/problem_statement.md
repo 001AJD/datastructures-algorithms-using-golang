@@ -11,6 +11,31 @@ The program works as follows:
 
 The primary purpose is to demonstrate the use of goroutines to parallelize I/O-bound tasks, such as making network requests, to improve performance.
 
+## Result of processing 100K domains
+
+```
+URL status checker initiating...
+
+Alloc = 0 MB
+TotalAlloc = 0 MB
+Sys = 8 MB
+NumGC = 0
+Goroutines: 1
+------
+2026/02/14 23:54:09 protocol error: received DATA on a HEAD request
+2026/02/14 23:55:03 Transport: unhandled response frame type *http.http2UnknownFrame
+
+File processing complete
+Processing completed in 3m23.709959333s
+
+Alloc = 848 MB
+TotalAlloc = 2586 MB
+Sys = 2755 MB
+NumGC = 16
+Goroutines: 174132
+------
+```
+
 ## Architecture Diagram
 
 ```
@@ -21,32 +46,28 @@ The primary purpose is to demonstrate the use of goroutines to parallelize I/O-b
         v
 +-----------------+
 |  ProcessFile    |
-| (top-100.csv)   |
+| (reads domains) |
 +-----------------+
         |
-        | Divides into batches of 20
+        | Sends domains to a channel
+        v
++-----------------+
+| jobs (buffered  |
+|   channel)      |
++-----------------+
         |
+        | Workers read from the channel (Bounded Concurrency)
         v
 +-------------------------------------------------+
 |                                                 |
-| +-----------------+ +-----------------+ +-----+ |
-| |  Batch 1 (20)   | |  Batch 2 (20)   | | ... | |
-| | (Goroutine)     | | (Goroutine)     | | ... | |
-| +-----------------+ +-----------------+ +-----+ |
+| +---------------+ +---------------+ +---------+ |
+| | Worker 1 (GR) | | Worker 2 (GR) | | ... (N) | |
+| | CheckStatus() | | CheckStatus() | | ...     | |
+| +---------------+ +---------------+ +---------+ |
 |                                                 |
 +-------------------------------------------------+
         |
-        | For each batch, spawn goroutines for each domain
-        v
-+-------------------------------------------------+
-|                                                 |
-| +-----------------+ +-----------------+ +-----+ |
-| | Domain 1 (GR)   | | Domain 2 (GR)   | | ... | |
-| | CheckStatus()   | | CheckStatus()   | | ... | |
-| +-----------------+ +-----------------+ +-----+ |
-|                                                 |
-+-------------------------------------------------+
-        |
+        | For each domain
         v
 +-----------------+
 |   HTTP GET      |
