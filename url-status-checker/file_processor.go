@@ -67,6 +67,7 @@ func ProcessFile(filePath string) {
 		}
 	}
 	wg.Wait()
+	fmt.Println("File processing complete")
 }
 
 // ProcessBatch handles a collection of domain strings by initiating concurrent status checks.
