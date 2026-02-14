@@ -1,2 +1,2 @@
-The data files present in this folder are copied and downloaded from the URL mentioned below.
+The data files present in this folder are copied and downloaded from the github repo -->
 https://github.com/lkarlslund/topdomains
