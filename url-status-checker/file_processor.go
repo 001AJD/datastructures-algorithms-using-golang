@@ -1,0 +1,95 @@
+package main
+
+import (
+	"encoding/csv"
+	"fmt"
+	"io"
+	"os"
+	"sync"
+)
+
+var BATCH_SIZE = 20
+
+// ProcessFile reads a CSV file line by line and processes its first column (domains) in concurrent batches.
+// It utilizes a sync.WaitGroup to ensure all background goroutines finish processing before the function returns.
+//
+// Workflow:
+//  1. Opens the file at the specified filePath.
+//  2. Iterates through the CSV records, accumulating domain strings into a slice (batch).
+//  3. Once the batch reaches BATCH_SIZE, it launches a goroutine to execute ProcessBatch(batch).
+//  4. Handles the final partial batch if the file ends before reaching a full BATCH_SIZE.
+//  5. Blocks at wg.Wait() until all asynchronous processing is complete.
+//
+// Parameters:
+//   - filePath: The local system path to the CSV file to be processed.
+//
+// Note: This function will panic if the file cannot be opened or if a CSV read error
+// other than io.EOF occurs.
+func ProcessFile(filePath string) {
+	var batch []string
+	var wg sync.WaitGroup
+	file, err := os.Open(filePath)
+	if err != nil {
+		panic(err)
+	}
+	defer file.Close()
+	reader := csv.NewReader(file)
+
+	for {
+		record, err := reader.Read()
+		if err == io.EOF {
+			if len(batch) > 0 {
+				wg.Add(1)
+				go func(b []string) { // A goroutine is spawned for each batch, feels magical here
+					defer wg.Done()
+					ProcessBatch(b)
+				}(batch)
+			}
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		domain := record[0] // first column in csv is domain
+		batch = append(batch, domain)
+		if len(batch) == BATCH_SIZE {
+			wg.Add(1)
+			go func(b []string) { // A goroutine is spawned for each batch, feels magical twice now
+				defer wg.Done()
+				ProcessBatch(b)
+			}(batch)
+			batch = nil
+		}
+	}
+	wg.Wait()
+}
+
+// ProcessBatch handles a collection of domain strings by initiating concurrent status checks.
+// It iterates through the provided batch and spawns a separate goroutine for each domain
+// to execute CheckStatus(url) in parallel.
+//
+// Parameters:
+//   - batch: A slice of strings containing the domains or URLs to be processed.
+//
+// Workflow:
+//  1. Prints the total count of items in the current batch for logging.
+//  2. Iterates over the slice, adding to a sync.WaitGroup for each entry.
+//  3. Launches an anonymous goroutine for each domain to perform a GET request via CheckStatus.
+//  4. Blocks execution at wg.Wait() until every goroutine in the batch has signaled completion.
+//
+// Warning: This implementation spawns one goroutine per domain without a limit.
+// For large batches, this can lead to high memory consumption or "too many open files"
+// errors from the operating system.
+func ProcessBatch(batch []string) {
+	var wg sync.WaitGroup
+	fmt.Println(len(batch))
+	for _, v := range batch {
+		wg.Add(1)
+		go func(url string) { // go routines are spawned for a GET request for each domain, currently number of goroutines = number of domains, bad design, need to refactor
+			defer wg.Done()
+			CheckStatus(url)
+		}(v)
+	}
+	wg.Wait()
+}
