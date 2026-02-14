@@ -1,3 +1,7 @@
+// TODO: currently the goroutines are unbounded and directly depends on the number of urls in the file
+// example if there are 10,000 urls --> 10,000 goroutines are spawned, that is bad and needs be refactored
+// what's next ? - The concurrency should be bounded irrespective of the input size
+
 package main
 
 import (
