@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -27,14 +26,14 @@ var client = &http.Client{
 // Note: This function does not currently close the response body, which may lead
 // to resource leaks in long-running applications.
 func CheckStatus(url string) string {
-	fmt.Println("GET request initiated inside go routine for ", url)
+	// fmt.Println("HEAD request initiated inside go routine for ", url)
 	response, err := client.Head(url)
 	if err != nil {
-		fmt.Println(err.Error())
+		// fmt.Println(err.Error())
 		return "Request with " + url + " failed with error :: " + err.Error()
 	} else {
 		defer response.Body.Close()
-		fmt.Println("Http GET request successful, statusCode :: ", response.StatusCode)
+		// fmt.Println("Http GET request successful, statusCode :: ", response.StatusCode)
 		return "Request with " + url + " succeed with status code :: " + strconv.Itoa(response.StatusCode)
 	}
 }

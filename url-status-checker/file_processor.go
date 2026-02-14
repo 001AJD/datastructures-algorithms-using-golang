@@ -39,6 +39,7 @@ func ProcessFile(filePath string) {
 	defer file.Close()
 	reader := csv.NewReader(file)
 
+	batchCounter := 1
 	for {
 		record, err := reader.Read()
 		if err == io.EOF {
@@ -48,6 +49,7 @@ func ProcessFile(filePath string) {
 					defer wg.Done()
 					ProcessBatch(b)
 				}(batch)
+				// fmt.Printf("\nBatch %d, Goroutines %d\n", batchCounter, len(batch))
 			}
 			break
 		}
@@ -64,10 +66,12 @@ func ProcessFile(filePath string) {
 				ProcessBatch(b)
 			}(batch)
 			batch = nil
+			// fmt.Printf("\nBatch %d, Goroutines %d\n", batchCounter, BATCH_SIZE)
+			batchCounter++
 		}
 	}
 	wg.Wait()
-	fmt.Println("File processing complete")
+	fmt.Printf("\nFile processing complete\n")
 }
 
 // ProcessBatch handles a collection of domain strings by initiating concurrent status checks.
@@ -88,7 +92,7 @@ func ProcessFile(filePath string) {
 // errors from the operating system.
 func ProcessBatch(batch []string) {
 	var wg sync.WaitGroup
-	fmt.Println(len(batch))
+	// fmt.Println(len(batch))
 	for _, v := range batch {
 		wg.Add(1)
 		go func(url string) { // go routines are spawned for a GET request for each domain, currently number of goroutines = number of domains, bad design, need to refactor
