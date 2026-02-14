@@ -1,0 +1,41 @@
+flowchart LR
+    A["CSV Reader"] --> B["Jobs Channel (Buffered)"]
+
+    subgraph "Go Runtime (Bounded Worker Pool)"
+        direction LR
+        
+        B --> W1["Worker 1"]
+        B --> W2["Worker 2"]
+        B --> W3["Worker 3"]
+        B --> Wn["Worker N (Fixed)"]
+
+        W1 --> C1["CheckStatus url"]
+        W2 --> C2["CheckStatus url"]
+        W3 --> C3["CheckStatus url"]
+        Wn --> Cn["CheckStatus url"]
+    end
+
+    C1 --> D["HTTP HEAD Request"]
+    C2 --> D
+    C3 --> D
+    Cn --> D
+
+    D --> E["Network I/O Wait (~300-500ms avg latency)"]
+    E --> F["HTTP Response Received"]
+    F --> G["Print Status / Return Result"]
+
+    %% Styling - Good Design (Green Shades)
+    style B fill:#52c41a,color:#ffffff,stroke:#006400,stroke-width:2px
+
+    style W1 fill:#73d13d,color:#ffffff
+    style W2 fill:#73d13d,color:#ffffff
+    style W3 fill:#73d13d,color:#ffffff
+    style Wn fill:#73d13d,color:#ffffff
+
+    style C1 fill:#d9f7be
+    style C2 fill:#d9f7be
+    style C3 fill:#d9f7be
+    style Cn fill:#d9f7be
+
+    style D fill:#b7eb8f
+    style E fill:#f6ffed

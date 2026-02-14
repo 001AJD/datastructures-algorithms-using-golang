@@ -78,3 +78,17 @@ Goroutines: 174132
 |  Print Status   |
 +-----------------+
 ```
+
+```mermaid
+graph TD
+    A[main func] --> B{ProcessFile (reads domains)};
+    B -- Sends domains to a channel --> C(jobs (buffered channel));
+    C -- Workers read from the channel (Bounded Concurrency) --> D;
+    subgraph D [Workers]
+        D1[Worker 1 (GR)] --> E[CheckStatus()];
+        D2[Worker 2 (GR)] --> F[CheckStatus()];
+        D3[... (N)] --> G[...];
+    end
+    D -- For each domain --> H[HTTP HEAD];
+    H --> I[Print Status];
+```
