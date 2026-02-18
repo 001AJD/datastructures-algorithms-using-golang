@@ -10,6 +10,9 @@ type Domains struct {
 	Popularity int16  `json:"popularity"`
 }
 
+// CSVToJSON converts a CSV record into a Domains struct.
+// It expects record[0] to contain the domain name and record[1] to contain
+// the popularity value as a numeric string.
 func CSVToJSON(record []string) Domains {
 	var result Domains
 	i, err := strconv.Atoi(record[1])

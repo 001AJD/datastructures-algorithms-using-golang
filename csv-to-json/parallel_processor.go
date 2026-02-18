@@ -10,6 +10,8 @@ import (
 	"sync"
 )
 
+// ParallelProcessecor reads a CSV file, transforms each row into a Domains
+// value in parallel, and writes the resulting JSON array to output/output.json.
 func ParallelProcessecor(filePath string) (bool, error) {
 	var result bool = false
 	const WORKER_POOL = 50
@@ -75,6 +77,8 @@ func ParallelProcessecor(filePath string) (bool, error) {
 	return result, nil
 }
 
+// worker consumes CSV records from jobs, converts each record to a Domains
+// object, and sends the transformed value to processedRows.
 func worker(jobs <-chan []string, processedRows chan<- Domains, wg *sync.WaitGroup) {
 	defer wg.Done()
 	for record := range jobs {
@@ -83,6 +87,8 @@ func worker(jobs <-chan []string, processedRows chan<- Domains, wg *sync.WaitGro
 	}
 }
 
+// outputWriter drains transformed rows from processedRows and writes them as a
+// JSON array into the provided output file.
 func outputWriter(processedRows <-chan Domains, outputFile *os.File, writerWg *sync.WaitGroup) {
 	defer writerWg.Done()
 	writer := bufio.NewWriter(outputFile)

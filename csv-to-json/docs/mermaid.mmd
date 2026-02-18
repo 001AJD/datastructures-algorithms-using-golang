@@ -1,0 +1,39 @@
+flowchart TD
+
+    classDef goroutine fill:#E6F2FF,stroke:#007ACC,stroke-width:2px,color:#003366;
+    classDef channel fill:#CCE6FF,stroke:#005A9E,stroke-width:2px,color:#002B4D;
+    classDef io fill:#B3DAFF,stroke:#004C8C,stroke-width:2px,color:#001F33;
+
+    A["Main Goroutine - CSV Reader - ParallelProcessor"]:::goroutine
+
+    B["jobs channel (buffered size 200)"]:::channel
+
+    W1["worker #1 goroutine"]:::goroutine
+    W2["worker #2 goroutine"]:::goroutine
+    W3["worker #N goroutine pool size 50"]:::goroutine
+
+    C["processedRows channel fan-in"]:::channel
+
+    D["outputWriter single goroutine bufio Writer stream"]:::goroutine
+
+    E["output/output.json sequential file stream"]:::io
+
+    WG["WaitGroup sync coordination closes processedRows"]:::goroutine
+
+    A --> B
+
+    B --> W1
+    B --> W2
+    B --> W3
+
+    W1 --> C
+    W2 --> C
+    W3 --> C
+
+    C --> D
+    D --> E
+
+    W1 -.-> WG
+    W2 -.-> WG
+    W3 -.-> WG
+    WG -.-> C
