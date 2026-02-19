@@ -13,15 +13,14 @@ type Domains struct {
 // CSVToJSON converts a CSV record into a Domains struct.
 // It expects record[0] to contain the domain name and record[1] to contain
 // the popularity value as a numeric string.
-func CSVToJSON(record []string) Domains {
+func CSVToJSON(record []string) (Domains, error) {
 	var result Domains
 	i, err := strconv.Atoi(record[1])
-	fmt.Println(i)
 	if err != nil {
-		fmt.Println("string converstion failed!!")
+		fmt.Println("string conversion failed!!")
+		return Domains{}, fmt.Errorf("Bad record, failed string conversion %s", err.Error())
 	}
 	result.Domain = record[0]
 	result.Popularity = int16(i)
-	fmt.Println(result)
-	return result
+	return result, nil
 }
