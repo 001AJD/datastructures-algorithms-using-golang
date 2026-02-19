@@ -16,6 +16,7 @@ func ParallelProcessecor(inputFilePath string, outputFilePath string) (bool, err
 	const BATCH_SIZE = 200
 	var workerWg sync.WaitGroup
 	var writerWg sync.WaitGroup
+	var loggerWg sync.WaitGroup
 	jobs := make(chan []string, BATCH_SIZE)  // channel to read, transform the CSV row
 	processedRows := make(chan Domains, 200) // channel to write the results into the output json file
 	errorChannel := make(chan string, 200)   // channel to log errors
@@ -43,13 +44,15 @@ func ParallelProcessecor(inputFilePath string, outputFilePath string) (bool, err
 		go worker(jobs, processedRows, errorChannel, &workerWg)
 	}
 
-	// spin up go routine to write logs into log file via error Channel
-	go logging.ProcessLogs(errorChannel)
+	func() {
+		loggerWg.Add(1)
+		go logging.ProcessLogs(errorChannel, &loggerWg)
+
+	}()
 
 	go func() {
 		workerWg.Wait()
 		close(processedRows)
-		close(errorChannel)
 	}()
 
 	// spin up a go routine to write the processed json objects into the output json file
@@ -71,6 +74,7 @@ func ParallelProcessecor(inputFilePath string, outputFilePath string) (bool, err
 	}
 	close(jobs)
 	writerWg.Wait()
-
+	close(errorChannel)
+	loggerWg.Wait()
 	return true, nil
 }
