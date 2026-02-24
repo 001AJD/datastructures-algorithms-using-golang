@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"reflect"
+	"runtime"
 )
 
 func main() {
 	fmt.Println("Hello, World!")
+
+	fmt.Println("Num CPU", runtime.NumCPU())
 
 	// variables types
 	var num1 int8 = 20
