@@ -18,15 +18,15 @@ The repository is organized into specific modules, each focusing on a distinct t
 
 ## Topics Covered (Completed)
 
-- [x] **Basics:** Variable declarations, data types, `for` loops, `range`, and functions.
-- [x] **Memory Management:** Pointers (`&`, `*`), memory addresses, and pointer receivers.
-- [x] **Structs & Data Handling:** Slices, arrays, maps, and JSON serialization/deserialization.
-- [x] **Interfaces:** Decoupling, polymorphism, and implementing interfaces with structs.
-- [x] **Concurrency:** Goroutines, `sync.WaitGroup`, channels, and worker pools.
-- [x] **Concurrency Patterns:** Fan-out/Fan-in, bounded concurrency, and parallel processing.
-- [x] **Context:** Timeouts, cancellation, and context propagation (`context` package).
-- [x] **File I/O:** Reading CSV files, writing JSON files, and interacting with the filesystem.
-- [x] **Data Structures:** Singly Linked Lists (insertion, traversal).
+- [x] **Basics:** Variable declarations, data types, `for` loops, `range`, and functions. → [`/data-types-loops`](./data-types-loops)
+- [x] **Memory Management:** Pointers (`&`, `*`), memory addresses, and pointer receivers. → [`/pointers`](./pointers)
+- [x] **Structs & Data Handling:** Slices, arrays, maps, and JSON serialization. → [`/student-grade-manager`](./student-grade-manager)
+- [x] **Interfaces:** Decoupling, polymorphism, and implementing interfaces with structs. → [`/alert-hub`](./alert-hub)
+- [x] **Concurrency:** Goroutines, `sync.WaitGroup`, and parallel execution. → [`/goroutines`](./goroutines)
+- [x] **Concurrency Patterns:** Fan-out/Fan-in, bounded concurrency, and worker pools. → [`/csv-to-json`](./csv-to-json), [`/url-status-checker`](./url-status-checker)
+- [x] **Context:** Timeouts, cancellation, and context propagation. → [`/context-package`](./context-package)
+- [x] **File I/O:** CSV parsing, file creation, and output writing. → [`/student-grade-manager`](./student-grade-manager), [`/csv-to-json`](./csv-to-json)
+- [x] **Data Structures:** Singly Linked Lists (insertion, traversal). → [`/singly-linked-list`](./singly-linked-list)
 
 ## TODO: Learning Roadmap (Meticulous Progress)
 
