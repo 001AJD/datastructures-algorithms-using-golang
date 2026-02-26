@@ -4,36 +4,17 @@ Welcome to this repository! This project serves as a practical collection of Go 
 
 ## Project Structure
 
-The repository is organized into specific modules, each focusing on a distinct topic:
+The repository is organized into specific modules, each focusing on a distinct topic. For detailed explanations, see the `.md` files maintained within each directory.
 
-### 1. Data Types & Loops (`/data-types-loops`)
-*   **Concepts:** Basic syntax, variable declarations (`int`, `float`, `string`), Type reflection, and Control structures.
-*   **Key Features:**
-    *   `for` loops (standard and `while`-style).
-    *   Iterating over Slices and Maps using `range`.
-    *   Basic conditional logic (Functions).
-
-### 2. Pointers & Memory Management (`/pointers`)
-*   **Concepts:** Memory addresses, dereferencing, and modifying shared state.
-*   **Key Features:**
-    *   **Family Wallet:** A real-world example of using pointer receivers to modify a `Wallet` struct's balance (Deposit/Spend) in place, avoiding copy-by-value issues.
-    *   Demonstration of `&` (address) and `*` (value) operators.
-
-### 3. Student Grade Manager (`/student-grade-manager`)
-*   **Concepts:** Structs, Slices, Arrays, JSON Serialization, and File I/O.
-*   **Key Features:**
-    *   Manages a dynamic list of `Student` structs.
-    *   Calculates averages from fixed-size subject arrays.
-    *   **Filtering Logic:** Identifies "Toppers" (Average >= 90).
-    *   **Persistence:** exports the filtered data to a `toppers.json` file.
-    *   **Bonus:** A Word Counter utility using `strings` and Maps.
-
-### 4. Singly Linked List (`/singly-linked-list`)
-*   **Concepts:** Custom Data Structures, Dynamic Memory, Nodes.
-*   **Key Features:**
-    *   Implementation of a `LinkedList` and `Node` struct.
-    *   **Insertion:** Efficiently adding nodes at the start (O(1)).
-    *   **Traversal:** Iterating through the list using pointers until `nil`.
+*   [`/alert-hub`](./alert-hub): Demonstrates the use of interfaces in Go to build a flexible, polymorphic notification system.
+*   [`/context-package`](./context-package): Explores the Go `context` package for managing timeouts and cancellation in concurrent operations.
+*   [`/csv-to-json`](./csv-to-json): A CLI tool utilizing the fan-out/fan-in concurrency pattern to efficiently process and convert large CSV files to JSON.
+*   [`/data-types-loops`](./data-types-loops): Covers fundamental Go syntax, variable declarations, type reflection, and basic control structures.
+*   [`/goroutines`](./goroutines): An introduction to concurrent programming using goroutines and `sync.WaitGroup` to manage parallel tasks.
+*   [`/pointers`](./pointers): Illustrates memory management and pointer receivers using a practical "Family Vault" example to modify shared state.
+*   [`/singly-linked-list`](./singly-linked-list): Implements a custom singly linked list data structure with node insertion and traversal.
+*   [`/student-grade-manager`](./student-grade-manager): Demonstrates structs, slices, JSON serialization, and file I/O to manage and filter student data.
+*   [`/url-status-checker`](./url-status-checker): Leverages bounded concurrency to efficiently verify the HTTP status of large lists of URLs in parallel.
 
 ## Prerequisites
 
