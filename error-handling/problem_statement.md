@@ -1,54 +1,42 @@
-## Project: Task-Master CLI (Error Handling Lab)
+# Task-Master CLI: Project Summary & Technical Notes
 
-### Objective
+## Project Overview
 
-Build a command-line tool that processes a list of tasks from a JSON file. The goal is to implement a robust error-handling strategy using **Custom Types**, **Sentinel Errors**, and **Wrapping**.
-
----
-
-### Problem Statement
-
-You are tasked with creating a "Task Executor" that reads a `tasks.json` file. Each task has an `ID`, a `Name`, and a `Command`. Your program must handle failures gracefully by providing specific context for each type of error encountered during execution.
-
-#### Functional Requirements
-
-1. **File Validation**: If the `tasks.json` file is missing, return a wrapped error providing the file path.
-2. **Parsing**: If the JSON is malformed, wrap the standard library error with a custom "Configuration Error" message.
-3. **Task Lookup**: If a user requests a specific Task ID that doesn't exist, return a **Sentinel Error** (`ErrTaskNotFound`).
-4. **Execution Failure**: Create a **Custom Error Struct** called `TaskExecutionError`. It should store:
-
-- The `TaskID` (int)
-- The `ExitCode` (int)
-- The original underlying error (wrapped)
+The **Task-Master CLI** is a Go-based utility designed to process task data from JSON files while demonstrating robust error-handling patterns. The project emphasizes the use of custom error types, error wrapping, and the `errors` package functionality (`Is`, `As`, `Unwrap`).
 
 ---
 
-### Learning Milestones
+## Codebase Summary
 
-To successfully complete this project, you must demonstrate the following Go patterns:
+### 1. Domain Errors (`internal/domain_errors`)
 
-- **Sentinel Check**: Use `errors.Is` to check if the error is exactly `ErrTaskNotFound`.
-- **Context Wrapping**: Use `fmt.Errorf("... %w", err)` when the file loader fails.
-- **Type Assertion**: Use `errors.As` in your `main` function to catch a `TaskExecutionError` and print a specialized message: _"Task 101 failed with exit code 5"_.
-- **Interface Implementation**: Ensure your `TaskExecutionError` struct correctly implements the `Error() string` method.
+Defines specialized error structures to provide rich context when failures occur:
+
+- **`ErrInvalidTaskID`**: Used when a task violates business logic (e.g., using a reserved ID).
+- **`ErrTaskFileUnavailable`**: Wraps filesystem errors with metadata like `Path` and `Operation`.
+- **Implementation**: Both types implement the `Error()` and `Unwrap()` methods, supporting Go's standard error-chaining protocols.
+
+### 2. Filesystem Utility (`internal/filesystem`)
+
+- Provides a `BufferedReader` abstraction to handle file I/O efficiently using `bufio`.
+- Ensures files are opened with appropriate permissions and provides a clean interface for closing resources.
+
+### 3. Task Processor (`internal/processor`)
+
+- **Initialization**: Validates the existence of input files and maps low-level `os` errors to domain-specific types.
+- **Streaming JSON**: Uses `json.NewDecoder` to process tasks one by one, ensuring low memory overhead for large datasets.
+- **Validation**: Implements logic to catch "Reserved Task IDs" during the decoding phase.
+
+### 4. Application Entry Point (`main.go`)
+
+- Acts as the error router.
+- Demonstrates **Type Assertion** using `errors.As` to distinguish between filesystem failures and data validation errors, providing tailored feedback to the user.
 
 ---
 
-### Expected Output Logic
+## Technical Notes
 
-Your `main` function should behave like a router for errors:
-
-- If it's a **Sentinel**, print a "User Warning."
-- If it's a **Custom Type**, print the "Technical Metadata" (ID and Exit Code).
-- If it's **Unknown**, print a "Generic Failure" message.
-
----
-
-### Current Progress
-
-- [x] **File Validation**: Custom error type `ErrTaskFileUnavailable` implemented with path and operation context.
-- [x] **Custom Error Types**: `ErrInvalidTaskID` implemented for business logic validation.
-- [ ] **Parsing**: Malformed JSON needs to be wrapped with a "Configuration Error" message.
-- [ ] **Task Lookup**: Sentinel error `ErrTaskNotFound` and lookup logic are pending.
-- [ ] **Execution Failure**: `TaskExecutionError` struct needs to be implemented.
-- [ ] **Main Function Routing**: Update `main.go` to handle sentinels and the new custom execution error.
+- **Error Wrapping**: The project correctly uses wrapping to preserve original context (e.g., `os.PathError` is preserved within `ErrTaskFileUnavailable`).
+- **Sentinel Errors**: While the structure is ready, specific sentinel errors (like `ErrTaskNotFound`) are identified as future integration points for specific lookup logic.
+- **Data Integrity**: The processor currently flags `TaskId: 20` as a reserved system ID, demonstrating how custom errors can enforce business rules during parsing.
+- **Extensibility**: The architecture allows for easy addition of a `TaskExecutionError` struct to handle process-level failures (exit codes, command output) in future iterations.
