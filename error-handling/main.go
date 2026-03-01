@@ -17,12 +17,9 @@ func main() {
 		// filesystem error
 		var errTaskFileUnavailable *domain_errors.ErrTaskFileUnavailable
 
-		// json data file errors
-		var ErrInvalidTaskID *domain_errors.ErrInvalidTaskID
-
 		if errors.As(err, &errTaskFileUnavailable) {
 			fmt.Println("Error:: File does not exist")
-		} else if errors.As(err, &ErrInvalidTaskID) {
+		} else if errors.Is(err, domain_errors.ErrReservedTaskID) {
 			fmt.Println("Error: Reserved Task ID found in the data")
 		} else {
 			fmt.Println("Error occurred")

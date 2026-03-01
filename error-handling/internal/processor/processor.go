@@ -45,7 +45,7 @@ func Init(filepath string) (bool, error) {
 		}
 		if t.TaskId == 20 {
 			return false, &domain_errors.ErrInvalidTaskID{
-				Err:     errors.New("Reserved Task ID"),
+				Err:     domain_errors.ErrReservedTaskID,
 				Message: "Task ID is reserved for systems usage.",
 			}
 		}

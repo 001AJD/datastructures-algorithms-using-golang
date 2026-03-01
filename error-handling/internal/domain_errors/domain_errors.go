@@ -1,6 +1,11 @@
 package domain_errors
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
+
+var ErrReservedTaskID = errors.New("Reserved task ID")
 
 type ErrInvalidTaskID struct {
 	Message string

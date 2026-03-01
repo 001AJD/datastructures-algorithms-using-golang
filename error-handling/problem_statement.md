@@ -10,11 +10,12 @@ The **Task-Master CLI** is a Go-based utility designed to process task data from
 
 ### 1. Domain Errors (`internal/domain_errors`)
 
-Defines specialized error structures to provide rich context when failures occur:
+Defines specialized error structures and sentinel errors to provide rich context when failures occur:
 
-- **`ErrInvalidTaskID`**: Used when a task violates business logic (e.g., using a reserved ID).
+- **`ErrReservedTaskID`**: A sentinel error used to identify attempts to use system-reserved identifiers.
+- **`ErrInvalidTaskID`**: Used when a task violates business logic; wraps `ErrReservedTaskID` or other validation errors with additional context.
 - **`ErrTaskFileUnavailable`**: Wraps filesystem errors with metadata like `Path` and `Operation`.
-- **Implementation**: Both types implement the `Error()` and `Unwrap()` methods, supporting Go's standard error-chaining protocols.
+- **Implementation**: Custom error types implement the `Error()` and `Unwrap()` methods, supporting Go's standard error-chaining protocols.
 
 ### 2. Filesystem Utility (`internal/filesystem`)
 
@@ -30,13 +31,13 @@ Defines specialized error structures to provide rich context when failures occur
 ### 4. Application Entry Point (`main.go`)
 
 - Acts as the error router.
-- Demonstrates **Type Assertion** using `errors.As` to distinguish between filesystem failures and data validation errors, providing tailored feedback to the user.
+- Demonstrates **Type Assertion** using `errors.As` for structured errors and **Sentinel Error Checking** using `errors.Is` to catch specific failure conditions like reserved IDs, providing tailored feedback to the user.
 
 ---
 
 ## Technical Notes
 
 - **Error Wrapping**: The project correctly uses wrapping to preserve original context (e.g., `os.PathError` is preserved within `ErrTaskFileUnavailable`).
-- **Sentinel Errors**: While the structure is ready, specific sentinel errors (like `ErrTaskNotFound`) are identified as future integration points for specific lookup logic.
+- **Sentinel Errors**: Implemented `ErrReservedTaskID` to handle specific business logic violations. Future integration points include `ErrTaskNotFound` for lookup logic.
 - **Data Integrity**: The processor currently flags `TaskId: 20` as a reserved system ID, demonstrating how custom errors can enforce business rules during parsing.
 - **Extensibility**: The architecture allows for easy addition of a `TaskExecutionError` struct to handle process-level failures (exit codes, command output) in future iterations.
