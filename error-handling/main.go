@@ -36,20 +36,4 @@ func main() {
 	} else {
 		fmt.Println("File processing completed successfully:: ", result)
 	}
-
-	// for decoder.More() {
-	// 	var task Tasks
-
-	// 	err := decoder.Decode(&task)
-	// 	if err != nil {
-	// 		var typeErr *json.UnmarshalTypeError
-	// 		if errors.As(err, &typeErr) {
-	// 			if typeErr.Field == "taskId" {
-
-	// 			}
-	// 		}
-	// 	}
-	// 	fmt.Println(task.TaskId, task.Duration)
-	// }
-
 }
