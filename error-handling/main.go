@@ -12,23 +12,18 @@ func main() {
 	fmt.Println("starting task handler...")
 	// result, err := processor.Init("./sample-data/tasks.json")
 	// result, err := processor.Init("./sample-data/invalid_structure.json")
-	result, err := processor.Init("./sample-data/bad_data.json")
+	result, err := processor.Init("./sample-data/tasks.json")
 	if err != nil {
 		// filesystem error
 		var errTaskFileUnavailable *domain_errors.ErrTaskFileUnavailable
-		var errTaskFilePermission *domain_errors.ErrTaskFilePermission
-		var errInvalidToken *domain_errors.ErrInvalidToken
+
 		// json data file errors
 		var ErrInvalidTaskID *domain_errors.ErrInvalidTaskID
 
 		if errors.As(err, &errTaskFileUnavailable) {
 			fmt.Println("Error:: File does not exist")
-		} else if errors.As(err, &errTaskFilePermission) {
-			fmt.Println("Error:: Permission denined on file")
-		} else if errors.As(err, &errInvalidToken) {
-			fmt.Println("Error occurred:: Invalid token found in json file")
 		} else if errors.As(err, &ErrInvalidTaskID) {
-			fmt.Println("Error: Invalid Task ID found in the data")
+			fmt.Println("Error: Reserved Task ID found in the data")
 		} else {
 			fmt.Println("Error occurred")
 			fmt.Println(err)

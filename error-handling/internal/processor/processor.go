@@ -28,24 +28,12 @@ func Init(filepath string) (bool, error) {
 			}
 
 		} else if errors.Is(err, os.ErrPermission) {
-			return false, &domain_errors.ErrTaskFilePermission{
-				Err:     err,
-				Message: err.Error(),
-			}
-		} else {
 			return false, err
 		}
 	}
 
 	decoder := json.NewDecoder(bufferedReader.File)
 	if _, err := decoder.Token(); err != nil {
-		var jsonErrType *json.UnmarshalTypeError
-		if errors.As(err, &jsonErrType) {
-			return false, &domain_errors.ErrInvalidToken{
-				Err:     err,
-				Message: err.Error(),
-			}
-		}
 		return false, err
 	}
 
@@ -54,6 +42,12 @@ func Init(filepath string) (bool, error) {
 		var t *Task
 		if err := decoder.Decode(&t); err != nil {
 			return false, err
+		}
+		if t.TaskId == 20 {
+			return false, &domain_errors.ErrInvalidTaskID{
+				Err:     errors.New("Reserved Task ID"),
+				Message: "Task ID is reserved for systems usage.",
+			}
 		}
 	}
 	return true, nil
