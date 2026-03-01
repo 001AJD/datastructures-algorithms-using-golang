@@ -42,4 +42,13 @@ Your `main` function should behave like a router for errors:
 - If it's a **Custom Type**, print the "Technical Metadata" (ID and Exit Code).
 - If it's **Unknown**, print a "Generic Failure" message.
 
-Would you like to start by defining the **Custom Error Struct** and the **Sentinel Errors** for this project?
+---
+
+### Current Progress
+
+- [x] **File Validation**: Custom error type `ErrTaskFileUnavailable` implemented with path and operation context.
+- [x] **Custom Error Types**: `ErrInvalidTaskID` implemented for business logic validation.
+- [ ] **Parsing**: Malformed JSON needs to be wrapped with a "Configuration Error" message.
+- [ ] **Task Lookup**: Sentinel error `ErrTaskNotFound` and lookup logic are pending.
+- [ ] **Execution Failure**: `TaskExecutionError` struct needs to be implemented.
+- [ ] **Main Function Routing**: Update `main.go` to handle sentinels and the new custom execution error.
