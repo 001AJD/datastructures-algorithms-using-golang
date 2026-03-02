@@ -1,0 +1,31 @@
+graph TD
+    %% Infrastructure - macOS System Gray
+    I1[Raw OS Error]
+    I2[Raw OS Error]
+
+    %% Boundary
+    Step{Translation Logic}
+
+    %% Elevation Path - Go Gopher Blue
+    Wrap(Semantic Elevation)
+    DE[Domain Error: Task Halted]
+
+    %% Pass-through Path - Neutral
+    Pass(Pass-through)
+    PE[System Error: Access Denied]
+
+    %% Connections
+    I1 --> Step
+    I2 --> Step
+    Step -- "Adds Meaning" --> Wrap
+    Step -- "No Value Added" --> Pass
+    Wrap --> DE
+    Pass --> PE
+
+    style I1 fill:#F5F5F7,stroke:#D2D2D7
+    style I2 fill:#F5F5F7,stroke:#D2D2D7
+    style Step fill:#FFFFFF,stroke:#86868B
+    style Wrap fill:#E0F7FA,stroke:#00ADD8,stroke-width:2px
+    style DE fill:#FFFFFF,stroke:#00ADD8
+    style Pass fill:#FFFFFF,stroke:#86868B,stroke-dasharray: 5 5
+    style PE fill:#FFFFFF,stroke:#86868B
