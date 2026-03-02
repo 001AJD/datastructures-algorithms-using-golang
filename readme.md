@@ -7,10 +7,13 @@ Welcome to this repository! This project serves as a practical collection of Go 
 The repository is organized into specific modules, each focusing on a distinct topic. For detailed explanations, see the `.md` files maintained within each directory.
 
 - [`/alert-hub`](./alert-hub): Demonstrates the use of interfaces in Go to build a flexible, polymorphic notification system.
-- [`/context-package`](./context-package): Explores the Go `context` package for managing timeouts and cancellation in concurrent operations.
-- [`/csv-to-json`](./csv-to-json): A CLI tool utilizing the fan-out/fan-in concurrency pattern to efficiently process and convert large CSV files to JSON.
-- [`/data-types-loops`](./data-types-loops): Covers fundamental Go syntax, variable declarations, type reflection, and basic control structures.
-- [`/goroutines`](./goroutines): An introduction to concurrent programming using goroutines and `sync.WaitGroup` to manage parallel tasks.
+
+* [`/context-package`](./context-package): Explores the Go `context` package for managing timeouts and cancellation in concurrent operations.
+* [`/csv-to-json`](./csv-to-json): A CLI tool utilizing the fan-out/fan-in concurrency pattern to efficiently process and convert large CSV files to JSON.
+* [`/data-types-loops`](./data-types-loops): Covers fundamental Go syntax, variable declarations, type reflection, and basic control structures.
+* [`/error-handling`](./error-handling): demonstrates robust error-handling patterns using custom error types, sentinel errors, and error wrapping with `errors.Is` and `errors.As`.
+* [`/goroutines`](./goroutines): An introduction to concurrent programming using goroutines and `sync.WaitGroup` to manage parallel tasks.
+
 - [`/pointers`](./pointers): Illustrates memory management and pointer receivers using a practical "Family Vault" example to modify shared state.
 - [`/singly-linked-list`](./singly-linked-list): Implements a custom singly linked list data structure with node insertion and traversal.
 - [`/student-grade-manager`](./student-grade-manager): Demonstrates structs, slices, JSON serialization, and file I/O to manage and filter student data.
@@ -25,6 +28,7 @@ The repository is organized into specific modules, each focusing on a distinct t
 - [x] **Concurrency:** Goroutines, `sync.WaitGroup`, and parallel execution. → [`/goroutines`](./goroutines)
 - [x] **Concurrency Patterns:** Fan-out/Fan-in, bounded concurrency, and worker pools. → [`/csv-to-json`](./csv-to-json), [`/url-status-checker`](./url-status-checker)
 - [x] **Context:** Timeouts, cancellation, and context propagation. → [`/context-package`](./context-package)
+- [x] **Error Handling:** Custom error types, sentinel errors, and wrapping (`errors.Is`, `errors.As`). → [`/error-handling`](./error-handling)
 - [x] **File I/O:** CSV parsing, file creation, and output writing. → [`/student-grade-manager`](./student-grade-manager), [`/csv-to-json`](./csv-to-json)
 - [x] **Data Structures:** Singly Linked Lists (insertion, traversal). → [`/singly-linked-list`](./singly-linked-list)
 
@@ -33,9 +37,10 @@ The repository is organized into specific modules, each focusing on a distinct t
 ### 🟢 1. Intermediate Language Depth
 
 - [ ] **Error Handling:**
-  - [ ] Custom Error Types & Wrapping (`errors.Is`, `errors.As`, `%w`)
+  - [x] Custom Error Types & Wrapping (`errors.Is`, `errors.As`, `%w`)
   - [ ] Deferred Functions (Advanced patterns like named return value modification)
   - [ ] Panic & Recover (Safe recovery in goroutines)
+
 - [ ] **Generics:**
   - [ ] Type parameters and constraints (Go 1.18+)
   - [ ] Creating Generic data structures and functions
